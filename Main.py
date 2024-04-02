@@ -29,11 +29,23 @@ class Record:
         self.phones = [p for p in self.phones if str(p) != phone]
 
     def edit_phone(self, old_phone, new_phone):
-        self.remove_phone(old_phone)
-        self.add_phone(new_phone)
+        if old_phone not in [str(p) for p in self.phones]:       # Чи існує старий номер телефону
+            raise ValueError("Old phone number does not exist.")
+        try:
+            new_phone = Phone(new_phone)  # перевырка нового номеру
+            self.remove_phone(old_phone)
+            self.add_phone(new_phone)
+        except ValueError as e:
+            raise ValueError("Invalid new phone number format.") from e
 
     def find_phone(self, phone):
-        return phone if Phone(phone) in self.phones else None
+        for p in self.phones:
+            if str(p) == phone:
+                return p
+        return None
+    
+    #def find_phone(self, phone):
+        #return phone if Phone(phone) in self.phones else None
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(str(p) for p in self.phones)}"
